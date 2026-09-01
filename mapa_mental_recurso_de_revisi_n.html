@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental - Recurso de Revisión (Arts. 95-106 LJA Honduras)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Node Animation */
+        .node-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .node-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Connection line styles */
+        .tree-line {
+            border-color: #334155;
+        }
+
+        /* Active highlight styling */
+        .highlight-search {
+            ring: 3px;
+            ring-color: #3b82f6;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { border-color: #60a5fa; box-shadow: 0 0 25px rgba(96, 165, 250, 0.8); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+                    <i class="fa-solid fa-sitemap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+                        Recurso de Revisión
+                    </h1>
+                    <p class="text-xs text-slate-400">Ley sobre Justicia Constitucional de Honduras (Arts. 95 - 106)</p>
+                </div>
+            </div>
+
+            <!-- Controls & Search -->
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <div class="relative flex-1 md:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar palabra clave o artículo..." 
+                           class="w-full bg-slate-800 border border-slate-700 text-xs rounded-lg pl-9 pr-4 py-2 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+                
+                <button onclick="expandAll()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-angles-down"></i> Expandir Todo
+                </button>
+                <button onclick="collapseAll()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-angles-up"></i> Colapsar
+                </button>
+                <button onclick="toggleViewMode()" id="viewModeBtn" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check"></i> Ver Resumen
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 p-4 md:p-8 max-w-[1600px] mx-auto w-full">
+
+        <!-- Visual Mind Map Section -->
+        <div id="mindmapView" class="space-y-8">
+            
+            <!-- CENTRAL NODE -->
+            <div class="flex justify-center">
+                <div class="node-card bg-gradient-to-br from-indigo-900/90 via-slate-900 to-slate-900 border-2 border-indigo-500/50 p-6 rounded-2xl shadow-2xl max-w-2xl text-center relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <span class="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold tracking-wider uppercase mb-2 border border-indigo-500/30">
+                        Título IV - Capítulo Único
+                    </span>
+                    <h2 class="text-2xl font-extrabold text-white mb-2">EL RECURSO DE REVISIÓN</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Garantía constitucional orientada a revocar o anular sentencias firmes (*cosa juzgada*) de manera excepcional, tutelando la justicia material, la libertad personal y la veracidad probatoria.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-2 text-xs">
+                        <span class="bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700 text-slate-300"><i class="fa-solid fa-scale-balanced text-indigo-400 mr-1"></i> Competencia: Sala de lo Constitucional (CSJ)</span>
+                        <span class="bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700 text-slate-300"><i class="fa-solid fa-gavel text-amber-400 mr-1"></i> Ruptura de Cosa Juzgada</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector Down Arrow -->
+            <div class="flex justify-center">
+                <div class="w-0.5 h-8 bg-gradient-to-b from-indigo-500 to-slate-700"></div>
+            </div>
+
+            <!-- PRIMARY BRANCHES GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- BRANCH 1: GENERALIDADES -->
+                <div class="branch-container bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 text-sm font-bold">1</div>
+                            <h3 class="font-bold text-slate-100 text-sm">Generalidades</h3>
+                        </div>
+                        <span class="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Art. 95</span>
+                    </div>
+
+                    <div class="space-y-3 flex-1">
+                        <!-- Card 1.1 -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="principio inmutabilidad juicio fenecido avocarse">
+                            <div class="font-semibold text-blue-300 mb-1 flex items-center justify-between">
+                                <span>Principio de Intangibilidad</span>
+                                <i class="fa-solid fa-lock text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-400 leading-normal mb-2">Ningún poder ni autoridad puede avocarse causas pendientes ni abrir juicios fenecidos.</p>
+                            <div class="bg-blue-950/40 p-2 rounded border border-blue-800/40 text-blue-200">
+                                <strong class="text-blue-400">Excepción:</strong> El Recurso de Revisión legalmente establecido.
+                            </div>
+                        </div>
+
+                        <!-- Card 1.2 -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="jurisdiccion competencia sala constitucional corte suprema">
+                            <div class="font-semibold text-blue-300 mb-1 flex items-center justify-between">
+                                <span>Órgano Competente</span>
+                                <i class="fa-solid fa-building-columns text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-400">Ejercida <strong class="text-slate-200">exclusivamente</strong> ante la Sala de lo Constitucional de la Corte Suprema de Justicia (CSJ).</p>
+                        </div>
+
+                        <!-- Card 1.3 -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="plazo prescripcion penal imprescriptible civil 6 meses">
+                            <div class="font-semibold text-blue-300 mb-1 flex items-center justify-between">
+                                <span>Temporalidad / Plazos</span>
+                                <i class="fa-solid fa-clock text-slate-500"></i>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between bg-slate-900/60 p-1.5 rounded">
+                                    <span class="text-emerald-400 font-medium">Materia Penal:</span>
+                                    <span class="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded text-[10px] font-bold">Toda época (Imprescriptible)</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-900/60 p-1.5 rounded">
+                                    <span class="text-amber-400 font-medium">Materia Civil:</span>
+                                    <span class="bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-bold">6 Meses (última notif.)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BRANCH 2: MATERIA PENAL -->
+                <div class="branch-container bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-sm font-bold">2</div>
+                            <h3 class="font-bold text-slate-100 text-sm">Materia Penal</h3>
+                        </div>
+                        <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Arts. 96 - 101</span>
+                    </div>
+
+                    <div class="space-y-3 flex-1">
+                        <!-- Collapsible Penal Causales -->
+                        <div class="node-card bg-slate-800/70 border border-slate-700/60 rounded-xl overflow-hidden">
+                            <button onclick="toggleCollapse('penalCausales')" class="w-full p-3 text-left font-semibold text-emerald-300 text-xs flex items-center justify-between bg-slate-800 hover:bg-slate-750">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-ol text-emerald-400"></i> 8 Causales de Procedencia</span>
+                                <i id="icon-penalCausales" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                            </button>
+                            <div id="penalCausales" class="p-3 pt-1 space-y-2 text-[11px] border-t border-slate-700/40">
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="dos o mas personas condenadas mismo delito">
+                                    <strong class="text-slate-200">1. Doble condena imposible:</strong> 2 o más condenados por delito que solo cometió 1.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="misma persona condenada mismo hecho dos sentencias">
+                                    <strong class="text-slate-200">2. Duplicidad de condena:</strong> Misma persona condenada en 2 sentencias distintas por el mismo hecho.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="condenada absuelta mismo hecho">
+                                    <strong class="text-slate-200">3. Sentencias contradictorias:</strong> Condenado en una y absuelto en otra por el mismo hecho.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="homicidio persona no fallecido viva">
+                                    <strong class="text-slate-200">4. Falsa víctima:</strong> Condenado por homicidio de persona que <span class="text-emerald-400 font-bold">no ha fallecido</span>.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="documento testimonio falso sentencia previa">
+                                    <strong class="text-slate-200">5. Prueba falsa:</strong> Condena basada en documento/testimonio declarado falso por sentencia firme.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="hechos nuevos prueba sobreviniente norma mas favorable doctrina legal">
+                                    <strong class="text-slate-200">6. Pruebas nuevas o cambio doctrinal:</strong> Hechos sobrevinientes, inexistencia del delito o doctrina legal más favorable.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="prevaricato cohecho juez jueces actuacion">
+                                    <strong class="text-slate-200">7. Delito judicial:</strong> Jueces condenados por prevaricato o cohecho en la causa.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-emerald-500" data-search="retroactividad ley penal benigna mas favorable">
+                                    <strong class="text-slate-200">8. Retroactividad:</strong> Aplicación de ley penal más benigna.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Penal Mechanics -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="suspencion ejecucion libertad medida cautelar">
+                            <div class="font-semibold text-emerald-300 mb-1 flex items-center justify-between">
+                                <span>Suspensión de Ejecución (Art. 98)</span>
+                                <i class="fa-solid fa-circle-pause text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-400">Regla: <strong class="text-slate-200">NO suspende</strong> la ejecución.</p>
+                            <p class="text-emerald-400 text-[11px] mt-1">Excepción: Si no hay duda sobre la veracidad de los hechos, la Sala decreta libertad o medida cautelar.</p>
+                        </div>
+
+                        <!-- Card Penal Effects -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="efectos libertad restitucion multa inhabilitacion recomputo">
+                            <div class="font-semibold text-emerald-300 mb-1 flex items-center justify-between">
+                                <span>Efectos Estimatorios (Art. 101)</span>
+                                <i class="fa-solid fa-check-double text-slate-500"></i>
+                            </div>
+                            <ul class="list-disc list-inside text-[11px] text-slate-300 space-y-0.5">
+                                <li>Inmediata libertad del condenado</li>
+                                <li>Restitución de multas pagadas</li>
+                                <li>Cese de inhabilitaciones y decomisos</li>
+                                <li>Recómputo con abono de prisión previa</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BRANCH 3: MATERIA CIVIL -->
+                <div class="branch-container bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-sm font-bold">3</div>
+                            <h3 class="font-bold text-slate-100 text-sm">Materia Civil</h3>
+                        </div>
+                        <span class="text-xs font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Arts. 102 - 105</span>
+                    </div>
+
+                    <div class="space-y-3 flex-1">
+                        <!-- Card Civil Scope -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="juicio declarativo ordinario mayor cuantia">
+                            <div class="font-semibold text-amber-300 mb-1 flex items-center justify-between">
+                                <span>Ámbito de Aplicación</span>
+                                <i class="fa-solid fa-file-contract text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-300 font-medium">Sentencias firmes en <span class="text-amber-400 font-bold">Juicios Declarativos Ordinarios de Mayor Cuantía</span>.</p>
+                        </div>
+
+                        <!-- Collapsible Civil Causales -->
+                        <div class="node-card bg-slate-800/70 border border-slate-700/60 rounded-xl overflow-hidden">
+                            <button onclick="toggleCollapse('civilCausales')" class="w-full p-3 text-left font-semibold text-amber-300 text-xs flex items-center justify-between bg-slate-800 hover:bg-slate-750">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-balance-scale text-amber-400"></i> 4 Causales de Procedencia</span>
+                                <i id="icon-civilCausales" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+                            </button>
+                            <div id="civilCausales" class="p-3 pt-1 space-y-2 text-[11px] border-t border-slate-700/40">
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-amber-500" data-search="documentos decisivos recobrados fuerza mayor obra parte">
+                                    <strong class="text-slate-200">1. Documentos Recobrados:</strong> Retenidos por fuerza mayor o por la contraparte.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-amber-500" data-search="documentos falsos reconocidos declarados">
+                                    <strong class="text-slate-200">2. Documentos Falsos:</strong> Falsedad ignorada o declarada judicialmente posterior al fallo.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-amber-500" data-search="testigos falso testimonio condenados">
+                                    <strong class="text-slate-200">3. Falso Testimonio:</strong> Testigos condenados por declaraciones decisivas en la sentencia.
+                                </div>
+                                <div class="p-1.5 bg-slate-900/80 rounded border-l-2 border-amber-500" data-search="cohecho violencia maquinacion fraudulenta">
+                                    <strong class="text-slate-200">4. Maquinación Fraudulenta:</strong> Sentencia obtenida por cohecho, violencia u otra maquinación.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Fianza -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="fianza suspension ejecucion valor litigado perjuicios">
+                            <div class="font-semibold text-amber-300 mb-1 flex items-center justify-between">
+                                <span>Requisito de Fianza (Art. 103)</span>
+                                <i class="fa-solid fa-shield-halved text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-400">Para suspender la ejecución en civil, el recurrente debe otorgar <strong class="text-amber-400">FIANZA BASTANTE</strong> que cubra el valor de lo litigado y posibles perjuicios.</p>
+                        </div>
+
+                        <!-- Card Civil Outcome -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="costas improcedente nuevo juicio anulación">
+                            <div class="font-semibold text-amber-300 mb-1 flex items-center justify-between">
+                                <span>Resolución y Costas (Art. 104-105)</span>
+                                <i class="fa-solid fa-coins text-slate-500"></i>
+                            </div>
+                            <p class="text-slate-300 mb-1"><strong>Estimatoria:</strong> Anula la sentencia y determina si debe seguirse un nuevo juicio.</p>
+                            <p class="text-red-400 text-[11px]"><strong>Improcedente:</strong> Condena obligatoria en <strong class="underline">costas</strong> al promovente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BRANCH 4: TRÁMITE COMÚN -->
+                <div class="branch-container bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-sm font-bold">4</div>
+                            <h3 class="font-bold text-slate-100 text-sm">Trámite Común</h3>
+                        </div>
+                        <span class="text-xs font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">Art. 106</span>
+                    </div>
+
+                    <div class="space-y-3 flex-1">
+                        <!-- Step 1 -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="admision antecedentes citacion">
+                            <div class="flex items-center gap-2 text-purple-300 font-semibold mb-1">
+                                <span class="w-5 h-5 rounded-full bg-purple-500/30 text-purple-300 text-[10px] flex items-center justify-center font-bold">1</span>
+                                <span>Admisión y Solicitud</span>
+                            </div>
+                            <p class="text-slate-400">Admitida la revisión, se ordena la remisión inmediata de antecedentes desde el tribunal de origen.</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="audiencia 30 dias oposicion pruebas fiscal">
+                            <div class="flex items-center gap-2 text-purple-300 font-semibold mb-1">
+                                <span class="w-5 h-5 rounded-full bg-purple-500/30 text-purple-300 text-[10px] flex items-center justify-center font-bold">2</span>
+                                <span>Audiencia Única</span>
+                            </div>
+                            <p class="text-slate-300 font-medium mb-1">Celebración dentro de los <span class="text-purple-400 font-bold">30 DÍAS HÁBILES</span> a la recepción de antecedentes.</p>
+                            <ul class="text-[11px] text-slate-400 space-y-0.5 list-disc list-inside">
+                                <li>Oposición de la parte afectada</li>
+                                <li>Evacuación de pruebas de partes</li>
+                                <li>Opinión del Fiscal del Despacho</li>
+                            </ul>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="node-card bg-slate-800/70 hover:bg-slate-800 border border-slate-700/60 rounded-xl p-3 text-xs" data-search="sentencia 20 dias resolucion examen pruebas">
+                            <div class="flex items-center gap-2 text-purple-300 font-semibold mb-1">
+                                <span class="w-5 h-5 rounded-full bg-purple-500/30 text-purple-300 text-[10px] flex items-center justify-center font-bold">3</span>
+                                <span>Suspensión y Fallo</span>
+                            </div>
+                            <p class="text-slate-400">Concluida la audiencia, se suspende para examen de pruebas por un plazo <strong class="text-purple-300">máximo de 20 DÍAS HÁBILES</strong> para dictar sentencia definitiva.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Summary Table View (Hidden by Default) -->
+        <div id="summaryView" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table text-indigo-400"></i> Cuadro Comparativo de Revisión: Penal vs. Civil
+                </h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 bg-slate-950/50">
+                                <th class="p-3">Criterio</th>
+                                <th class="p-3 text-emerald-400">Materia Penal (Arts. 96-101)</th>
+                                <th class="p-3 text-amber-400">Materia Civil (Arts. 102-105)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-400">Plazo de Interposición</td>
+                                <td class="p-3 text-emerald-300 font-medium">Imprescriptible (En toda época a favor del condenado)</td>
+                                <td class="p-3 text-amber-300 font-medium">6 Meses desde la última notificación de la sentencia firme</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-400">Legitimación Activa</td>
+                                <td class="p-3">Condenado, cualquier persona en su favor, Ministerio Público o de Oficio</td>
+                                <td class="p-3">Parte agraviada que intervino o con derecho a ser llamada</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-400">Objeto / Sentencias</td>
+                                <td class="p-3">Sentencias penales condenatorias firmes</td>
+                                <td class="p-3">Sentencias firmes de Juicios Declarativos Ordinarios de Mayor Cuantía</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-400">Regla de Suspensión</td>
+                                <td class="p-3">NO suspende (Salvo certeza fáctica -> Libertad / Medida Cautelar)</td>
+                                <td class="p-3">NO suspende (Salvo caución otorgando <strong class="text-amber-400">Fianza Bastante</strong>)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-400">Causales Principales</td>
+                                <td class="p-3">Doble condena, homicidio de persona viva, pruebas falsas, hechos nuevos, cohecho/prevaricato judicial, retroactividad benigna</td>
+                                <td class="p-3">Documentos decisivos recobrados, falsedad documental, falso testimonio de testigos, cohecho o violencia fraudulenta</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-slate-400">Costas en Desestimación</td>
+                                <td class="p-3 text-slate-400">No aplica condena automática en costas</td>
+                                <td class="p-3 text-red-400 font-bold">Condena obligatoria en costas al promovente (Art. 105)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-4 text-center text-slate-500 text-xs mt-auto">
+        <p>Síntesis Legal Interactiva - Ley sobre Justicia Constitucional de Honduras (Decreto No. 5-2004)</p>
+    </footer>
+
+    <!-- Interactive Logic Script -->
+    <script>
+        function toggleCollapse(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                el.classList.add('hidden');
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        function expandAll() {
+            document.querySelectorAll('[id^="penal"], [id^="civil"]').forEach(el => {
+                el.classList.remove('hidden');
+            });
+            document.querySelectorAll('[id^="icon-"]').forEach(icon => {
+                icon.style.transform = 'rotate(0deg)';
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('[id^="penal"], [id^="civil"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('[id^="icon-"]').forEach(icon => {
+                icon.style.transform = 'rotate(-90deg)';
+            });
+        }
+
+        function toggleViewMode() {
+            const mindmap = document.getElementById('mindmapView');
+            const summary = document.getElementById('summaryView');
+            const btn = document.getElementById('viewModeBtn');
+
+            if (mindmap.classList.contains('hidden')) {
+                mindmap.classList.remove('hidden');
+                summary.classList.add('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-list-check"></i> Ver Resumen';
+            } else {
+                mindmap.classList.add('hidden');
+                summary.classList.remove('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-sitemap"></i> Ver Mapa Mental';
+            }
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.node-card, [data-search]');
+
+            if (!query) {
+                cards.forEach(card => card.classList.remove('highlight-search'));
+                return;
+            }
+
+            cards.forEach(card => {
+                const text = (card.getAttribute('data-search') || '') + ' ' + card.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    card.classList.add('highlight-search');
+                    // Auto-expand parent if collapsed
+                    const parentCollapsible = card.closest('.hidden');
+                    if (parentCollapsible) {
+                        parentCollapsible.classList.remove('hidden');
+                        const icon = document.getElementById('icon-' + parentCollapsible.id);
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                } else {
+                    card.classList.remove('highlight-search');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
