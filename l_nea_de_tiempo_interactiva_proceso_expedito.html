@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Línea de Tiempo Interactiva: Proceso Expedito en Delitos de Flagrancia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 28px;
+            width: 4px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+        @media (min-width: 768px) {
+            .timeline-line::before {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        .step-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        .active-tab {
+            border-bottom: 3px solid #2563eb;
+            color: #2563eb;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-indigo-700 rounded-lg">
+                    <i class="fa-solid fa-scale-balanced text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Proceso Expedito en Flagrancia</h1>
+                    <p class="text-xs text-indigo-200">Derecho Procesal Penal de Honduras (Arts. 440-A a 440-O)</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-sm bg-indigo-950/60 px-3 py-1.5 rounded-full border border-indigo-700">
+                <i class="fa-regular fa-clock text-amber-400"></i>
+                <span>Plazo Máximo Total: <strong class="text-amber-400">30 Días Hábiles</strong> (Art. 440-M)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Navigation Tabs / Controls -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-8">
+            <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3 justify-between items-center">
+                <div class="flex space-x-1 sm:space-x-4">
+                    <button onclick="switchTab('timeline')" id="btn-timeline" class="px-4 py-2 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 flex items-center gap-2">
+                        <i class="fa-solid fa-timeline"></i> Línea de Tiempo Interactiva
+                    </button>
+                    <button onclick="switchTab('calculator')" id="btn-calculator" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-calculator"></i> Calculadora de Plazos
+                    </button>
+                    <button onclick="switchTab('articles')" id="btn-articles" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark"></i> Compendio de Artículos
+                    </button>
+                </div>
+                <!-- Filter by Actor -->
+                <div id="actor-filter-container" class="flex items-center space-x-2 text-xs sm:text-sm mt-3 sm:mt-0">
+                    <span class="text-slate-500 font-medium"><i class="fa-solid fa-filter"></i> Filtrar por Actor:</span>
+                    <select id="actorFilter" onchange="filterTimelineByActor()" class="bg-slate-100 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="all">Todos los Actores</option>
+                        <option value="policia">Policía Nacional</option>
+                        <option value="mp">Ministerio Público</option>
+                        <option value="juez">Juez de Letras</option>
+                        <option value="corte">Corte de Apelaciones</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4 text-xs text-slate-500 flex items-center justify-between flex-wrap gap-2">
+                <span><i class="fa-solid fa-circle-info text-indigo-500"></i> Haga clic en cualquier etapa de la línea de tiempo para ver los artículos citados, fundamentación legal y detalles del procedimiento.</span>
+                <span class="bg-amber-50 text-amber-800 px-2.5 py-1 rounded border border-amber-200">Decreto No. 74-2013</span>
+            </div>
+        </div>
+
+        <!-- TAB 1: TIMELINE VIEW -->
+        <div id="tab-timeline" class="block">
+            <div class="relative timeline-line space-y-8 md:space-y-12">
+
+                <!-- ETAPA 1 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="policia" onclick="openModal(1)">
+                    <div class="flex md:w-1/2 justify-start md:justify-end w-full pl-16 md:pl-0 md:pr-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-shield-halved"></i> Policía Nacional
+                                </span>
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                    Plazo: Máximo 6 Horas
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">1. Aprehensión en Flagrancia y Remisión</h3>
+                            <p class="text-sm text-slate-600 mb-3">Detención del sospechoso en la comisión del delito o inmediatamente después (cuasiflagrancia). Lectura de derechos constitucionales y elaboración del informe policial.</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículos 440-A, 440-B</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        1
+                    </div>
+                    <div class="md:w-1/2 w-full pl-16 md:pl-12 mt-2 md:mt-0">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Punto de Inicio</div>
+                        <div class="text-sm text-slate-700 font-medium">Límite improrrogable: 6h para puesta a la orden del MP</div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 2 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="mp" onclick="openModal(2)">
+                    <div class="md:w-1/2 w-full pl-16 md:pl-0 md:pr-12 text-right hidden md:block">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Investigación Fiscal</div>
+                        <div class="text-sm text-slate-700 font-medium">Acumulado total: 24 horas desde la aprehensión</div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        2
+                    </div>
+                    <div class="flex md:w-1/2 justify-start w-full pl-16 md:pl-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-building-columns"></i> Ministerio Público
+                                </span>
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                    Plazo: Dentro de las 24 horas
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">2. Sede Administrativa y Requerimiento Fiscal</h3>
+                            <p class="text-sm text-slate-600 mb-3">El Fiscal evalúa si se cumplen los presupuestos de flagrancia y presenta la Solicitud de Juzgamiento Expedito con el Requerimiento Fiscal ante el Juez de Letras.</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículos 440-B, 440-C</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 3 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="juez" onclick="openModal(3)">
+                    <div class="flex md:w-1/2 justify-start md:justify-end w-full pl-16 md:pl-0 md:pr-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-gavel"></i> Juez de Letras
+                                </span>
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                    Plazo: De Inmediato
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">3. Audiencia de Procedibilidad y Medidas Cautelares</h3>
+                            <p class="text-sm text-slate-600 mb-3">El Juez califica la flagrancia, oye a las partes, resuelve la procedencia de la vía expedita y decreta medidas cautelares (la prisión preventiva no superará 30 días).</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículos 440-C, 440-D</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        3
+                    </div>
+                    <div class="md:w-1/2 w-full pl-16 md:pl-12 mt-2 md:mt-0">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Control Jurisdiccional</div>
+                        <div class="text-sm text-slate-700 font-medium">Impugnación de procedibilidad: dentro de las 24 horas</div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 4 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="juez" onclick="openModal(4)">
+                    <div class="md:w-1/2 w-full pl-16 md:pl-0 md:pr-12 text-right hidden md:block">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Depuración Procesal</div>
+                        <div class="text-sm text-slate-700 font-medium">Plazo fijado en la resolución de procedibilidad</div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        4
+                    </div>
+                    <div class="flex md:w-1/2 justify-start w-full pl-16 md:pl-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-handshake"></i> Juez de Letras / Partes
+                                </span>
+                                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                                    Plazo: Dentro de 48 Horas
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">4. Audiencia Preparatoria y Salidas Alternas</h3>
+                            <p class="text-sm text-slate-600 mb-3">Se exploran salidas alternativas (conciliación, procedimiento abreviado), se proponen y admiten las pruebas, y se fija fecha inmediata para el juicio oral.</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículos 440-E, 440-F</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 5 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="juez" onclick="openModal(5)">
+                    <div class="flex md:w-1/2 justify-start md:justify-end w-full pl-16 md:pl-0 md:pr-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-gavel"></i> Juez de Letras
+                                </span>
+                                <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                                    Plazo: Máx. 5 Días Hábiles
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">5. Audiencia de Juicio y Fallo Oral</h3>
+                            <p class="text-sm text-slate-600 mb-3">Evacuación pública y oral de pruebas (testigos, peritos, documentos), alegatos finales y dictación inmediata del fallo de forma verbal por el Juez.</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículos 440-G, 440-I</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-red-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        5
+                    </div>
+                    <div class="md:w-1/2 w-full pl-16 md:pl-12 mt-2 md:mt-0">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Etapa Contradictoria</div>
+                        <div class="text-sm text-slate-700 font-medium">Celeridad, concentración y oralidad estricta</div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 6 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="juez" onclick="openModal(6)">
+                    <div class="md:w-1/2 w-full pl-16 md:pl-0 md:pr-12 text-right hidden md:block">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Formalización de Sentencia</div>
+                        <div class="text-sm text-slate-700 font-medium">Redacción escrita y notificación motivada</div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        6
+                    </div>
+                    <div class="flex md:w-1/2 justify-start w-full pl-16 md:pl-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-file-signature"></i> Juez de Letras
+                                </span>
+                                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                    Plazo: 3 Días Hábiles
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">6. Redacción y Notificación de la Sentencia</h3>
+                            <p class="text-sm text-slate-600 mb-3">El Juez redacta íntegramente la sentencia motivada por escrito y procede a su notificación formal a las partes procesales.</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículo 440-H</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 7 -->
+                <div class="step-item relative flex flex-col md:flex-row items-center cursor-pointer" data-actor="corte" onclick="openModal(7)">
+                    <div class="flex md:w-1/2 justify-start md:justify-end w-full pl-16 md:pl-0 md:pr-12">
+                        <div class="step-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full hover:border-indigo-400">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-3 py-1 bg-slate-800 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+                                    <i class="fa-solid fa-landmark"></i> Corte de Apelaciones
+                                </span>
+                                <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                                    10 días interponer / 5 días resolver
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1">7. Recurso de Apelación e Impugnación</h3>
+                            <p class="text-sm text-slate-600 mb-3">Las partes procesales disponen de 10 días hábiles para apelar. La Corte de Apelaciones debe resolver el recurso en un plazo perentorio de 5 días hábiles.</p>
+                            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                                <span class="font-semibold text-indigo-600"><i class="fa-solid fa-gavel"></i> Artículos 440-J, 440-M</span>
+                                <span class="text-indigo-600 hover:underline">Ver detalles <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Timeline Node Icon -->
+                    <div class="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-14 h-14 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold shadow-lg border-4 border-slate-50 z-10 text-xl">
+                        7
+                    </div>
+                    <div class="md:w-1/2 w-full pl-16 md:pl-12 mt-2 md:mt-0">
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cierre Procesal</div>
+                        <div class="text-sm text-slate-700 font-medium">Tope máximo del juzgamiento: 30 días hábiles</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 2: CALCULADORA DE PLAZOS -->
+        <div id="tab-calculator" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 max-w-4xl mx-auto">
+                <div class="flex items-center space-x-3 mb-6 border-b border-slate-200 pb-4">
+                    <div class="p-3 bg-indigo-100 text-indigo-700 rounded-xl">
+                        <i class="fa-solid fa-calculator text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Calculadora Automática de Plazos Legales</h2>
+                        <p class="text-xs text-slate-500">Ingrese la fecha y hora exacta de aprehensión para estimar los vencimientos de cada etapa procesal.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Fecha y Hora de la Aprehensión:</label>
+                        <input type="datetime-local" id="detencionDatetime" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="calcularPlazos()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i> Calcular Vencimientos
+                        </button>
+                    </div>
+                </div>
+
+                <div id="calculatorResults" class="hidden space-y-4 pt-4 border-t border-slate-100">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-emerald-600"></i> Cronograma de Vencimientos Estimado:
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-blue-50 border border-blue-200 p-3.5 rounded-xl">
+                            <span class="text-xs font-bold text-blue-700 block">1. Remisión al Ministerio Público (Máx. 6h):</span>
+                            <span id="res-6h" class="text-base font-bold text-slate-800">--</span>
+                        </div>
+                        <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl">
+                            <span class="text-xs font-bold text-indigo-700 block">2. Solicitud y Requerimiento Fiscal (Máx. 24h):</span>
+                            <span id="res-24h" class="text-base font-bold text-slate-800">--</span>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl">
+                            <span class="text-xs font-bold text-amber-700 block">3. Audiencia Preparatoria (Dentro de 48h tras procedibilidad):</span>
+                            <span id="res-48h" class="text-base font-bold text-slate-800">--</span>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 p-3.5 rounded-xl">
+                            <span class="text-xs font-bold text-red-700 block">4. Audiencia de Juicio (Máx. 5 días hábiles post-preparatoria):</span>
+                            <span id="res-5dias" class="text-base font-bold text-slate-800">--</span>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl">
+                            <span class="text-xs font-bold text-emerald-700 block">5. Notificación de Sentencia Escrita (3 días hábiles):</span>
+                            <span id="res-3dias" class="text-base font-bold text-slate-800">--</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-xl">
+                            <span class="text-xs font-bold text-purple-700 block">6. Límite Absoluto del Proceso Expedito (30 días hábiles):</span>
+                            <span id="res-30dias" class="text-base font-bold text-slate-800">--</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 italic mt-2">* Nota: Los plazos en días se computan únicamente en días hábiles procesales conforme al Artículo 440-L del CPP.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: COMPENDIO DE ARTÍCULOS LEGALES -->
+        <div id="tab-articles" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 max-w-5xl mx-auto space-y-6">
+                <div class="border-b border-slate-200 pb-4">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-book-journal-whills text-indigo-600"></i> Artículos Fundamentales (Decreto No. 74-2013 / CPP)
+                    </h2>
+                    <p class="text-xs text-slate-500">Regulación del Procedimiento Expedito para los Delitos en Flagrancia en el Código Procesal Penal de Honduras.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Art 440-A -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículo 440-A: Procedencia</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Se aplica a las personas aprehendidas en flagrante delito o cuasiflagrancia. No aplica a casos de investigación compleja, criminalidad organizada o de difícil evacuación probatoria, los cuales se reconvierten al proceso ordinario.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-B -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículo 440-B: Plazos Iniciales</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            La Policía debe remitir al detenido ante el Ministerio Público dentro de <strong>6 horas</strong>. El MP tiene hasta <strong>24 horas</strong> contadas desde la aprehensión para presentar el Requerimiento Fiscal y solicitar la vía expedita.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-C -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículo 440-C: Audiencia de Procedibilidad</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            El Juez de Letras resuelve de inmediato si declara con o sin lugar la aplicación del procedimiento expedito y resuelve las medidas cautelares aplicables.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-D -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículo 440-D: Medidas Cautelares</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Las medidas cautelares se imponen según las reglas generales del CPP. Si se dicta Prisión Preventiva, esta no podrá exceder bajo ninguna circunstancia el plazo de <strong>30 días</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-E y 440-F -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículos 440-E y 440-F: Audiencia Preparatoria</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Se celebra dentro de las <strong>48 horas</strong> siguientes a la procedibilidad. Espacio para salidas alternativas (conciliación, abreviado) y para la proposición/admisión de medios probatorios.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-G y 440-H -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículos 440-G y 440-H: Juicio y Sentencia</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            El Juicio se celebra dentro de <strong>5 días hábiles</strong> post-preparatoria. Fallo oral inmediato. La redacción y notificación formal escrita se realiza dentro de los <strong>3 días hábiles</strong> posteriores.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-J -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículo 440-J: Recurso de Apelación</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Se interpone dentro de <strong>10 días hábiles</strong> contados a partir de la notificación formal. La Corte de Apelaciones debe resolver dentro de <strong>5 días hábiles</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Art 440-M -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-bold text-indigo-700 text-sm mb-1">Artículo 440-M: Duración Máxima Total</div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Ningún procedimiento expedito podrá exceder en su totalidad del límite perentorio de <strong>30 días hábiles</strong> desde la aprehensión hasta la sentencia definitiva.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal para Detalles de la Etapa -->
+    <div id="stageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 relative animate-fade-in max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Se llena dinámicamente con JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Funcionalidades Interactivas -->
+    <script>
+        const stageData = {
+            1: {
+                title: "1. Aprehensión en Flagrancia y Remisión Policial",
+                actor: "Policía Nacional de Honduras",
+                plazo: "Máximo 6 Horas",
+                articulos: "Artículos 440-A, 440-B del CPP",
+                descripcion: "Ocurre cuando la persona es sorprendida en el momento mismo de cometer el delito o inmediatamente después (cuasiflagrancia), con instrumentos o huellas que permitan presumir fundadamente su participación.",
+                actividades: [
+                    "Aprehensión e inmovilización de la persona sospechosa.",
+                    "Lectura de los Derechos del Imputado (Art. 101 CPP).",
+                    "Aseguramiento y embalaje de los elementos probatorios y de convicción.",
+                    "Elaboración del informe policial preventivo.",
+                    "Traslado y remisión del detenido ante la Fiscalía del Ministerio Público dentro del plazo perentorio de 6 horas."
+                ],
+                alerta: "Si la Policía transgrede el plazo de 6 horas sin justificación legal, la detención puede ser considerada ilegal."
+            },
+            2: {
+                title: "2. Actuación en Sede Administrativa y Requerimiento Fiscal",
+                actor: "Ministerio Público (Fiscalía de Turno)",
+                plazo: "Dentro de las 24 horas desde la aprehensión",
+                articulos: "Artículos 440-B, 440-C del CPP",
+                descripcion: "El Fiscal evalúa los hechos presentados por la Policía para verificar si encuadran objetivamente en un delito flagrante y si procede la vía expedita.",
+                actividades: [
+                    "Revisión de la legalidad de la aprehensión policial.",
+                    "Entrevista previa con el detenido y su defensor técnico.",
+                    "Evaluación de la complejidad probatoria.",
+                    "Elaboración de la Solicitud de Juzgamiento por Procedimiento Expedito.",
+                    "Presentación formal del Requerimiento Fiscal con la solicitud ante el Juzgado de Letras competente dentro de las 24 horas de la captura."
+                ],
+                alerta: "Si el caso requiere peritajes complejos o dilaciones probatorias prolongadas, el Fiscal debe solicitar la tramitación mediante el procedimiento ordinario."
+            },
+            3: {
+                title: "3. Audiencia de Procedibilidad y Medidas Cautelares",
+                actor: "Juez de Letras de lo Penal",
+                plazo: "De Inmediato tras recibir la solicitud",
+                articulos: "Artículos 440-C, 440-D del CPP",
+                descripcion: "El Juez de Letras ejerce el control de convencionalidad y legalidad sobre la detención y resuelve si la causa se tramitará por la vía expedita o por el juicio ordinario.",
+                actividades: [
+                    "Verificación de los requisitos del estado de flagrancia.",
+                    "Oídor a las partes procesales (Fiscal, Acusador Privado, Defensa).",
+                    "Resolución judicial motivada declarando CON LUGAR o SIN LUGAR el proceso expedito.",
+                    "Imposición de medidas cautelares (si decreta prisión preventiva, esta no excederá los 30 días).",
+                    "La resolución es apelable oralmente en el acto o por escrito dentro de las 24 horas."
+                ],
+                alerta: "La resolución de procedibilidad determina el rumbo celerísimo del juzgamiento."
+            },
+            4: {
+                title: "4. Audiencia Preparatoria y Proposición de Prueba",
+                actor: "Juez de Letras, Fiscal, Defensa y Víctima",
+                plazo: "Dentro de las 48 horas siguientes a la procedibilidad",
+                articulos: "Artículos 440-E, 440-F del CPP",
+                descripcion: "Audiencia de depuración procesal cuyo objetivo principal es buscar salidas alternativas al juzgamiento formal o delimitar la prueba para el juicio.",
+                actividades: [
+                    "Exploración obligatoria de salidas alternativas (Conciliación, Criterio de Oportunidad, Suspensión Condicional).",
+                    "Aplicación del Procedimiento Abreviado si existe admisión de hechos y acuerdo de penas.",
+                    "Si el proceso continúa, las partes proponen sus medios de prueba (testifical, documental, pericial).",
+                    "Auto de admisión o exclusión de prueba dictado por el Juez.",
+                    "Señalamiento inmediato de fecha y hora para la Audiencia de Juicio."
+                ],
+                alerta: "Todas las pruebas deben estar disponibles para evacuarse en un plazo no mayor a 5 días."
+            },
+            5: {
+                title: "5. Audiencia de Juicio Oral y Pronunciamiento de Fallo",
+                actor: "Juez de Letras (Competencia Exclusiva)",
+                plazo: "No mayor a 5 Días Hábiles posteriores a la Preparatoria",
+                articulos: "Artículos 440-G, 440-I del CPP",
+                descripcion: "Etapa cumbre donde se practica el debate oral y público mediante la evacuación concentrada de la prueba admitida.",
+                actividades: [
+                    "Verificación de asistencia de partes, testigos y peritos.",
+                    "Declaración opcional del imputado con respeto al derecho de guardar silencio.",
+                    "Evacuación de pruebas (interrogatorio y contrainterrogatorio de testigos y peritos).",
+                    "Alegatos finales y de conclusión por el Ministerio Público y la Defensa.",
+                    "Pronunciamiento verbal e inmediato del Fallo (Condenatorio o Absolutorio) en la misma audiencia."
+                ],
+                alerta: "Regido estrictamente por los principios de inmediatez, concentración, continuidad y oralidad."
+            },
+            6: {
+                title: "6. Redacción Escrita y Notificación de la Sentencia",
+                actor: "Juez de Letras",
+                plazo: "Dentro de los 3 Días Hábiles siguientes al juicio",
+                articulos: "Artículo 440-H del CPP",
+                descripcion: "Formalización por escrito del fallo verbal pronunciado en la Audiencia de Juicio con la debida motivación fáctica y jurídica.",
+                actividades: [
+                    "Redacción íntegra del texto de la sentencia motivada.",
+                    "Firma del documento formal por el Juez de Letras.",
+                    "Notificación personal de la sentencia escrita a la representación fiscal, querellante, imputado y su defensa técnica."
+                ],
+                alerta: "A partir del día hábil siguiente a la notificación formal escrita, comienza a correr el plazo para interponer recursos."
+            },
+            7: {
+                title: "7. Impugnación mediante Recurso de Apelación",
+                actor: "Corte de Apelaciones Competente",
+                plazo: "10 Días Hábiles para interponer / 5 Días Hábiles para resolver",
+                articulos: "Artículos 440-J, 440-M del CPP",
+                descripcion: "Garantía de la doble instancia jurisdiccional mediante la revisión de la sentencia por un tribunal colegiado superior.",
+                actividades: [
+                    "Interposición por escrito del Recurso de Apelación dentro de 10 días hábiles.",
+                    "Remisión inmediata de los antecedentes a la Corte de Apelaciones.",
+                    "Resolución obligatoria del recurso dentro de los 5 días hábiles siguientes al recibo del expediente.",
+                    "Verificación final del cumplimiento del límite máximo e improrrogable del proceso (30 días hábiles)."
+                ],
+                alerta: "El procedimiento expedito no puede prolongarse más allá de 30 días hábiles en total."
+            }
+        };
+
+        function switchTab(tabId) {
+            document.getElementById('tab-timeline').classList.add('hidden');
+            document.getElementById('tab-calculator').classList.add('hidden');
+            document.getElementById('tab-articles').classList.add('hidden');
+
+            document.getElementById('btn-timeline').className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 flex items-center gap-2";
+            document.getElementById('btn-calculator').className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 flex items-center gap-2";
+            document.getElementById('btn-articles').className = "px-4 py-2 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 flex items-center gap-2";
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`btn-${tabId}`).className = "px-4 py-2 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 flex items-center gap-2";
+
+            // Hide/Show actor filter container only for timeline tab
+            const filterContainer = document.getElementById('actor-filter-container');
+            if (tabId === 'timeline') {
+                filterContainer.style.display = 'flex';
+            } else {
+                filterContainer.style.display = 'none';
+            }
+        }
+
+        function filterTimelineByActor() {
+            const selectedActor = document.getElementById('actorFilter').value;
+            const items = document.querySelectorAll('.step-item');
+
+            items.forEach(item => {
+                const actor = item.getAttribute('data-actor');
+                if (selectedActor === 'all' || actor === selectedActor) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function openModal(stageNumber) {
+            const data = stageData[stageNumber];
+            if (!data) return;
+
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full">
+                        ${data.actor}
+                    </span>
+                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded border border-amber-200">
+                        ${data.plazo}
+                    </span>
+                </div>
+                <h2 class="text-xl font-bold text-slate-800 mb-2">${data.title}</h2>
+                <div class="text-xs font-semibold text-indigo-600 mb-4 flex items-center gap-1">
+                    <i class="fa-solid fa-book"></i> Fundamentación Legal: ${data.articulos}
+                </div>
+                
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed">${data.descripcion}</p>
+
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Actuaciones y Diligencias Clave:</h4>
+                <ul class="space-y-2 mb-4 text-xs text-slate-600">
+                    ${data.actividades.map(act => `<li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i> <span>${act}</span></li>`).join('')}
+                </ul>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded text-xs text-amber-900 flex items-start gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5 text-sm"></i>
+                    <div>
+                        <strong>Garantía / Advertencia Procesal:</strong> ${data.alerta}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('stageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('stageModal').classList.add('hidden');
+        }
+
+        // Close modal on click outside content
+        document.getElementById('stageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Calculadora de plazos
+        function calcularPlazos() {
+            const inputVal = document.getElementById('detencionDatetime').value;
+            if (!inputVal) {
+                alert('Por favor seleccione la fecha y hora de la aprehensión.');
+                return;
+            }
+
+            const detencion = new Date(inputVal);
+
+            // Add hours helper
+            function addHours(date, hours) {
+                return new Date(date.getTime() + hours * 60 * 60 * 1000);
+            }
+
+            // Helper to add business days (excluding Saturday & Sunday)
+            function addBusinessDays(date, days) {
+                let result = new Date(date);
+                let added = 0;
+                while (added < days) {
+                    result.setDate(result.getDate() + 1);
+                    if (result.getDay() !== 0 && result.getDay() !== 6) {
+                        added++;
+                    }
+                }
+                return result;
+            }
+
+            const formatOptions = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+
+            const f6h = addHours(detencion, 6);
+            const f24h = addHours(detencion, 24);
+            const f48h = addHours(f24h, 48);
+            const f5dias = addBusinessDays(f48h, 5);
+            const f3dias = addBusinessDays(f5dias, 3);
+            const f30dias = addBusinessDays(detencion, 30);
+
+            document.getElementById('res-6h').innerText = f6h.toLocaleDateString('es-HN', formatOptions);
+            document.getElementById('res-24h').innerText = f24h.toLocaleDateString('es-HN', formatOptions);
+            document.getElementById('res-48h').innerText = f48h.toLocaleDateString('es-HN', formatOptions);
+            document.getElementById('res-5dias').innerText = f5dias.toLocaleDateString('es-HN', formatOptions);
+            document.getElementById('res-3dias').innerText = f3dias.toLocaleDateString('es-HN', formatOptions);
+            document.getElementById('res-30dias').innerText = f30dias.toLocaleDateString('es-HN', formatOptions);
+
+            document.getElementById('calculatorResults').classList.remove('hidden');
+        }
+
+        // Set default datetime input to now
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('detencionDatetime').value = now.toISOString().slice(0, 16);
+        });
+    </script>
+</body>
+</html>
